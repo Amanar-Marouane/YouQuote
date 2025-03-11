@@ -24,7 +24,7 @@ class QuoteController extends Controller
     {
         return $this->success(
             Quote::where($column, $value)
-            ->get()
+                ->get()
         );
     }
 
@@ -32,6 +32,14 @@ class QuoteController extends Controller
      * Show the form for creating a new resource.
      */
     public function create(QuoteStoreRequest $request)
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(QuoteStoreRequest $request)
     {
         $type = Type::where('type', $request->type)
             ->first();
@@ -42,14 +50,6 @@ class QuoteController extends Controller
             'content' => json_encode($request->except(['author', 'quote', 'type']), true),
         ]);
         return $this->success($quote);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
     }
 
     /**
