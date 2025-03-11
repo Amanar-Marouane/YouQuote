@@ -119,6 +119,8 @@ class QuoteController extends Controller
 
     public function wordsCount($count)
     {
-        // $quote = 
+        $quotes = Quote::whereRaw('LENGTH(TRIM(REGEXP_REPLACE(quote, "[^a-zA-Z0-9 ]", ""))) - LENGTH(REPLACE(REGEXP_REPLACE(quote, "[^a-zA-Z0-9 ]", ""), " ", "")) + 1 >= ?', [$count])
+            ->pluck('quote');
+        return $this->success($quotes);
     }
 }

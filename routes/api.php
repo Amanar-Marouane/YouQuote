@@ -12,5 +12,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::put('/quote/{id}', [QuoteController::class, 'update'])->name('quote.update');
     Route::delete('/quote/{id}', [QuoteController::class, 'destroy'])->name('quote.destroy');
     Route::get('/quote/random/{limit}', [QuoteController::class, 'random'])->name('quote.random');
+    Route::get('/quote/filter/{count}', [QuoteController::class, 'wordsCount'])->name('quote.filter');
     Route::get('/quote/{column}/{value}', [QuoteController::class, 'find'])->name('quote.find');
 });
