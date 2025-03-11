@@ -15,4 +15,12 @@ class Quote extends Model
     {
         return $this->belongsTo(Type::class);
     }
+
+    public static function frenquecyInc($quotes)
+    {
+        foreach ($quotes as $quote) {
+            $quote->frequency++;
+            $quote->save();
+        }
+    }
 }

@@ -22,10 +22,10 @@ class QuoteController extends Controller
 
     public function find($column, $value)
     {
-        return $this->success(
-            Quote::where($column, $value)
-                ->get()
-        );
+        $quotes = Quote::where($column, $value)
+            ->get();
+        Quote::frenquecyInc($quotes);
+        return $this->success($quotes);
     }
 
     /**
@@ -114,6 +114,7 @@ class QuoteController extends Controller
         $quotes = Quote::inRandomOrder()
             ->limit($limit)
             ->pluck('quote');
+        Quote::frenquecyInc($quotes);
         return $this->success($quotes);
     }
 
@@ -121,6 +122,15 @@ class QuoteController extends Controller
     {
         $quotes = Quote::whereRaw('LENGTH(TRIM(REGEXP_REPLACE(quote, "[^a-zA-Z0-9 ]", ""))) - LENGTH(REPLACE(REGEXP_REPLACE(quote, "[^a-zA-Z0-9 ]", ""), " ", "")) + 1 >= ?', [$count])
             ->pluck('quote');
+        Quote::frenquecyInc($quotes);
         return $this->success($quotes);
+    }
+
+    public function popular()
+    {
+        $quotes = Quote::orderBy('frequency', 'desc')
+            ->limit(10)
+            ->get();
+        return $this->success($quotes, 'Top 10 Popular Quotes');
     }
 }
