@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\QuoteStoreRequest;
+use App\Http\Requests\{QuoteStoreRequest, QuoteUpdateRequest};
 use App\Http\Trait\HttpResponses;
 use App\Models\Quote;
 use App\Models\Type;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 
 class QuoteController extends Controller
 {
@@ -71,16 +71,35 @@ class QuoteController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(QuoteUpdateRequest $request, string $id)
     {
-        //
+        if (Auth::id() != (int)$request->user_id) {
+            return $this->error('', 'No Access', 401);
+        }
+        $quote = Quote::find($id);
+        if (!$quote) return $this->error('', 'Not Found', 404);
+
+        $updatedQuote = [];
+        foreach (['author', 'quote'] as $key) {
+            if ($request->$key) {
+                $updatedQuote[$key] = $request->$key;
+            }
+        }
+        $content = $request->except(['author', 'type', 'quote', 'user_id']);
+        $quote->update(array_merge($updatedQuote, ['content' => $content]));
+        return $this->success($quote, 'The quote has been updated');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
-        //
+        if (Auth::id() != (int)$request->user_id) {
+            return $this->error('', 'No Access', 401);
+        }
+        $quote = Quote::find($id);
+        $quote->delete();
+        return $this->success('', 'The quote has been deleted');
     }
 }
