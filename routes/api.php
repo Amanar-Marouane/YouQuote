@@ -11,5 +11,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/quote', [QuoteController::class, 'store'])->name('quote.store');
     Route::put('/quote/{id}', [QuoteController::class, 'update'])->name('quote.update');
     Route::delete('/quote/{id}', [QuoteController::class, 'destroy'])->name('quote.destroy');
+    Route::get('/quote/random/{limit}', [QuoteController::class, 'random'])->name('quote.random');
     Route::get('/quote/{column}/{value}', [QuoteController::class, 'find'])->name('quote.find');
 });

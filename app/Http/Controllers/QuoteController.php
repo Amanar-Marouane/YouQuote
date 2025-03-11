@@ -102,4 +102,12 @@ class QuoteController extends Controller
         $quote->delete();
         return $this->success('', 'The quote has been deleted');
     }
+
+    public function random($limit)
+    {
+        $quotes = Quote::inRandomOrder()
+            ->limit($limit)
+            ->pluck('quote');
+        return $this->success($quotes);
+    }
 }
