@@ -30,7 +30,7 @@ class QuoteStoreRequest extends FormRequest
                 'page_range' => 'required|integer|min:1',
                 'issue' => 'required|string|max:100',
                 'volume' => 'required|string|max:100',
-                'year' => 'required|integer||max:' . date('Y'),
+                'year' => 'required|integer|max:' . date('Y'),
             ],
             'Website' => [
                 'url' => 'required|url',
