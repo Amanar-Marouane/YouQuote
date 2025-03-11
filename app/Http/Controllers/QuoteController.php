@@ -41,13 +41,19 @@ class QuoteController extends Controller
      */
     public function store(QuoteStoreRequest $request)
     {
+        $typesColumns = [
+            'Book' => ['year', 'publisher'],
+            'Article' => ['page_range', 'issue', 'volume', 'year'],
+            'Website' => ['url'],
+        ];
+
         $type = Type::where('type', $request->type)
             ->first();
         $quote = Quote::create([
             'author' => $request->author,
             'quote' => $request->quote,
             'type_id' => $type->id,
-            'content' => json_encode($request->except(['author', 'quote', 'type']), true),
+            'content' => json_encode($request->only($typesColumns[$request->type]), true),
         ]);
         return $this->success($quote);
     }
@@ -109,5 +115,10 @@ class QuoteController extends Controller
             ->limit($limit)
             ->pluck('quote');
         return $this->success($quotes);
+    }
+
+    public function wordsCount($count)
+    {
+        // $quote = 
     }
 }
