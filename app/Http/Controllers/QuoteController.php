@@ -7,6 +7,7 @@ use App\Http\Trait\HttpResponses;
 use App\Models\Quote;
 use App\Models\Type;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class QuoteController extends Controller
 {
@@ -16,7 +17,15 @@ class QuoteController extends Controller
      */
     public function index()
     {
-        //
+        return $this->success(Quote::all());
+    }
+
+    public function find($column, $value)
+    {
+        return $this->success(
+            Quote::where($column, $value)
+            ->get()
+        );
     }
 
     /**
@@ -32,9 +41,7 @@ class QuoteController extends Controller
             'type_id' => $type->id,
             'content' => json_encode($request->except(['author', 'quote', 'type']), true),
         ]);
-        return $this->success([
-            'data' => $quote,
-        ]);
+        return $this->success($quote);
     }
 
     /**
