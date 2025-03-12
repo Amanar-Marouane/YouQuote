@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\{QuoteStoreRequest, QuoteUpdateRequest};
+use App\Http\Resources\QuoteResource;
 use App\Http\Trait\HttpResponses;
 use App\Models\Quote;
 use App\Models\Type;
@@ -17,7 +18,7 @@ class QuoteController extends Controller
      */
     public function index()
     {
-        return $this->success(Quote::all());
+        return $this->success(QuoteResource::collection(Quote::all()));
     }
 
     public function find($column, $value)
@@ -25,7 +26,7 @@ class QuoteController extends Controller
         $quotes = Quote::where($column, $value)
             ->get();
         Quote::frenquecyInc($quotes);
-        return $this->success($quotes);
+        return $this->success(new QuoteResource($quotes));
     }
 
     /**
@@ -55,7 +56,7 @@ class QuoteController extends Controller
             'type_id' => $type->id,
             'content' => json_encode($request->only($typesColumns[$request->type]), true),
         ]);
-        return $this->success($quote);
+        return $this->success(new QuoteResource($quote));
     }
 
     /**
@@ -93,7 +94,7 @@ class QuoteController extends Controller
         }
         $content = $request->except(['author', 'type', 'quote', 'user_id']);
         $quote->update(array_merge($updatedQuote, ['content' => $content]));
-        return $this->success($quote, 'The quote has been updated');
+        return $this->success(new QuoteResource($quote), 'The quote has been updated');
     }
 
     /**
@@ -113,17 +114,21 @@ class QuoteController extends Controller
     {
         $quotes = Quote::inRandomOrder()
             ->limit($limit)
-            ->pluck('quote');
-        Quote::frenquecyInc($quotes);
-        return $this->success($quotes);
+            ->get();
+        if ($quotes) {
+            Quote::frenquecyInc($quotes);
+        }
+        return $this->success(QuoteResource::collection($quotes));
     }
 
     public function wordsCount($count)
     {
         $quotes = Quote::whereRaw('LENGTH(TRIM(REGEXP_REPLACE(quote, "[^a-zA-Z0-9 ]", ""))) - LENGTH(REPLACE(REGEXP_REPLACE(quote, "[^a-zA-Z0-9 ]", ""), " ", "")) + 1 >= ?', [$count])
-            ->pluck('quote');
-        Quote::frenquecyInc($quotes);
-        return $this->success($quotes);
+            ->get();
+        if ($quotes) {
+            Quote::frenquecyInc($quotes);
+        }
+        return $this->success(QuoteResource::collection($quotes));
     }
 
     public function popular()
@@ -131,6 +136,6 @@ class QuoteController extends Controller
         $quotes = Quote::orderBy('frequency', 'desc')
             ->limit(10)
             ->get();
-        return $this->success($quotes, 'Top 10 Popular Quotes');
+        return $this->success(QuoteResource::collection($quotes), 'Top 10 Popular Quotes');
     }
 }
