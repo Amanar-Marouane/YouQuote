@@ -9,8 +9,9 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-
-use function PHPUnit\Framework\isNull;
+use Illuminate\Support\Str;
+use Illuminate\Support\Carbon;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
@@ -24,13 +25,18 @@ class AuthController extends Controller
         ])) {
             return $this->error('', 'Credentials do not match', 401);
         }
+
         $user = User::where('email', $request->email)->first();
         $user->tokens()->delete();
-        $token = $user->createToken('API token Of ' . $user->name)->plainTextToken;
+        $accessToken = $user->createToken($user->name, ['ability'], Carbon::now()->addMinutes(60 * 5))->plainTextToken;
+        $refreshToken = hash('sha256', Str::random(60));
+        $user->update(['refresh_token' => Hash::make($refreshToken)]);
 
         return $this->success([
             'user' => $user,
-            'token' => $token,
+        ], 'You Logged In Succefully', 200, [
+            'access_token' => $accessToken,
+            'refresh_token' => $refreshToken,
         ]);
     }
 
@@ -42,17 +48,25 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        $token = $user->createToken('API token Of ' . $user->name)->plainTextToken;
+        $accessToken = $user->createToken($user->name, ['ability'], Carbon::now()->addMinutes(60 * 5))->plainTextToken;
+        $refreshToken = hash('sha256', Str::random(60));
+        $user->update(['refresh_token' => Hash::make($refreshToken)]);
 
         return $this->success([
             'user' => $user,
-            'token' => $token,
+        ], 'You Signed Up Successfuly', 201, [
+            'access_token' => $accessToken,
+            'refresh_token' => $refreshToken,
         ]);
     }
 
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+
+        $user = $request->user();
+        $token = PersonalAccessToken::where('name', $user->name)->first();
+        $token->delete();
+        $user->update(['refresh_token' => null]);
         return $this->success('', 'LogOut Done Successfuly');
     }
 }
