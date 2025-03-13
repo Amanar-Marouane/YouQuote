@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\StoreUserRequest;
+use App\Http\Resources\UserResource;
 use App\Http\Trait\HttpResponses;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -33,7 +34,7 @@ class AuthController extends Controller
         $user->update(['refresh_token' => Hash::make($refreshToken)]);
 
         return $this->success([
-            'user' => $user,
+            'user' => new UserResource($user),
         ], 'You Logged In Succefully', 200, [
             'access_token' => $accessToken,
             'refresh_token' => $refreshToken,
@@ -53,7 +54,7 @@ class AuthController extends Controller
         $user->update(['refresh_token' => Hash::make($refreshToken)]);
 
         return $this->success([
-            'user' => $user,
+            'user' => new UserResource($user),
         ], 'You Signed Up Successfuly', 201, [
             'access_token' => $accessToken,
             'refresh_token' => $refreshToken,
