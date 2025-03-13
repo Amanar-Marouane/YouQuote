@@ -7,6 +7,7 @@ Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/quotes', [QuoteController::class, 'index'])->name('quote.index');
     Route::post('/quote', [QuoteController::class, 'store'])->name('quote.store');
     Route::put('/quote/{id}', [QuoteController::class, 'update'])->name('quote.update');

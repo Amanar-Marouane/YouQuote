@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
+use function PHPUnit\Framework\isNull;
+
 class AuthController extends Controller
 {
     use HttpResponses;
@@ -23,6 +25,7 @@ class AuthController extends Controller
             return $this->error('', 'Credentials do not match', 401);
         }
         $user = User::where('email', $request->email)->first();
+        $user->tokens()->delete();
         $token = $user->createToken('API token Of ' . $user->name)->plainTextToken;
 
         return $this->success([
@@ -45,5 +48,11 @@ class AuthController extends Controller
             'user' => $user,
             'token' => $token,
         ]);
+    }
+
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+        return $this->success('', 'LogOut Done Successfuly');
     }
 }
