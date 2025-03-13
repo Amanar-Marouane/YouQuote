@@ -80,7 +80,7 @@ class QuoteController extends Controller
      */
     public function update(QuoteUpdateRequest $request, string $id)
     {
-        if (Auth::id() != (int)$request->user_id) {
+        if ($request->user()->id != (int)$request->user_id) {
             return $this->error('', 'No Access', 401);
         }
         $quote = Quote::find($id);
@@ -94,7 +94,7 @@ class QuoteController extends Controller
         }
         $content = $request->except(['author', 'type', 'quote', 'user_id']);
         $quote->update(array_merge($updatedQuote, ['content' => $content]));
-        return $this->success(new QuoteResource($quote), 'The quote has been updated');
+        return $this->success($quote, 'The quote has been updated');
     }
 
     /**
@@ -102,7 +102,7 @@ class QuoteController extends Controller
      */
     public function destroy(Request $request, string $id)
     {
-        if (Auth::id() != (int)$request->user_id) {
+        if ($request->user()->id != (int)$request->user_id) {
             return $this->error('', 'No Access', 401);
         }
         $quote = Quote::find($id);

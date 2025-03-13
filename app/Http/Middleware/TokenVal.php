@@ -28,6 +28,9 @@ class TokenVal
         }
 
         $access_token = PersonalAccessToken::findToken($access_token);
+        if (!$access_token) {
+            return $this->error('Access token missing', 'Unauthenticated', 401);
+        }
         $user = $access_token->tokenable;
 
         if (!$user) {
