@@ -29,4 +29,9 @@ class Quote extends Model
             $quote->save();
         }
     }
+
+    public function tags()
+    {
+        return $this->hasMany(Tag::class);
+    }
 }

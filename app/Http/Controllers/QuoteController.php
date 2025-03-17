@@ -5,10 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\{QuoteStoreRequest, QuoteUpdateRequest};
 use App\Http\Resources\QuoteResource;
 use App\Http\Trait\HttpResponses;
-use App\Models\Category;
-use App\Models\Quote;
-use App\Models\QuoteCategory;
-use App\Models\Type;
+use App\Models\{Quote, Tag, QuoteCategory, Type};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -59,15 +56,22 @@ class QuoteController extends Controller
             'author' => $request->author,
             'quote' => $request->quote,
             'type_id' => $type->id,
-            'content' => $request->only($typesColumns[$request->type]),
+            'content' => json_encode($request->only($typesColumns[$request->type]), true),
             'user_id' => $request->user()->id,
         ]);
-        $categories = $request->category_id;
+
         $data = [];
-        foreach ($categories as $key => $value) {
+        foreach ($request->category_id as $key => $value) {
             $data[] = ['category_id' => $value, 'quote_id' => $quote->id];
         }
         QuoteCategory::insert($data);
+
+        $tags = [];
+        $data = $request->tags ?? [];
+        foreach ($data as $key => $value) {
+            $tags[] = ['tag' => $value, 'quote_id' => $quote->id];
+        }
+        Tag::insert($tags);
         return $this->success(new QuoteResource($quote));
     }
 
@@ -104,8 +108,8 @@ class QuoteController extends Controller
                 $updatedQuote[$key] = $request->$key;
             }
         }
-        $content = $request->except(['author', 'type', 'quote', 'user_id', 'category_id']);
-        $quote->update(array_merge($updatedQuote, ['content' => $content]));
+        $content = $request->except(['author', 'type', 'quote', 'user_id', 'category_id', 'tags']);
+        $quote->update(array_merge($updatedQuote, ['content' => json_encode($content, true)]));
 
         $categories = $request->category_id;
         $data = [];
@@ -114,6 +118,15 @@ class QuoteController extends Controller
         }
         QuoteCategory::where('quote_id', $id)->delete();
         QuoteCategory::insert($data);
+
+        $tags = [];
+        $data = $request->tags ?? [];
+        foreach ($data as $key => $value) {
+            $tags[] = ['tag' => $value, 'quote_id' => $quote->id];
+        }
+        Tag::where('quote_id', $id)->delete();
+        Tag::insert($tags);
+
         return $this->success(new QuoteResource($quote), 'The quote has been updated');
     }
 
@@ -123,10 +136,10 @@ class QuoteController extends Controller
     public function delete(Request $request, string $id)
     {
         $quote = Quote::find($id);
+        if (!$quote) return $this->error('', 'Not Found', 404);
         if ($request->user()->cannot('update', $quote)) {
             return $this->error('', 'No Access', 401);
         }
-        if (!$quote) return $this->error('', 'Not Found', 404);
         $quote->delete();
         return $this->success('', 'The quote has been deleted');
     }

@@ -18,10 +18,13 @@ class QuoteResource extends JsonResource
             'id' => $this->id,
             'author' => $this->author,
             'quote' => $this->quote,
-            'content' => $this->content,
+            'content' => json_decode($this->content),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'frequency' => $this->frequency,
             'categories' => CategoryResource::collection($this->categories),
+            'tags' => TagResource::collection($this->tags)->map(function ($item) {
+                return $item->tag;
+            })
         ];
     }
 }
