@@ -55,6 +55,7 @@ class QuoteController extends Controller
             'quote' => $request->quote,
             'type_id' => $type->id,
             'content' => json_encode($request->only($typesColumns[$request->type]), true),
+            'user_id' => $request->user()->id,
         ]);
         return $this->success(new QuoteResource($quote));
     }
@@ -80,10 +81,10 @@ class QuoteController extends Controller
      */
     public function update(QuoteUpdateRequest $request, string $id)
     {
-        if ($request->user()->id != (int)$request->user_id) {
+        $quote = Quote::find($id);
+        if ($request->user()->cannot('update', $quote)) {
             return $this->error('', 'No Access', 401);
         }
-        $quote = Quote::find($id);
         if (!$quote) return $this->error('', 'Not Found', 404);
 
         $updatedQuote = [];
@@ -100,12 +101,13 @@ class QuoteController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, string $id)
+    public function delete(Request $request, string $id)
     {
-        if ($request->user()->id != (int)$request->user_id) {
+        $quote = Quote::find($id);
+        if ($request->user()->cannot('update', $quote)) {
             return $this->error('', 'No Access', 401);
         }
-        $quote = Quote::find($id);
+        if (!$quote) return $this->error('', 'Not Found', 404);
         $quote->delete();
         return $this->success('', 'The quote has been deleted');
     }
