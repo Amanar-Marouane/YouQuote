@@ -41,6 +41,8 @@ class QuoteUpdateRequest extends FormRequest
             'type' => ['required', 'string', 'exists:types,type'],
             'quote' => ['required', 'string', 'max:1000'],
             'author' => ['required', 'string'],
+            'category_id' => ['required', 'array', 'min:1'],
+            'category_id.*' => ['exists:categories,id'],
         ];
         $mainColumns = ['author', 'type_id', 'quote'];
         $rules = [];

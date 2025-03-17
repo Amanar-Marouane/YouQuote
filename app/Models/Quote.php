@@ -12,6 +12,11 @@ class Quote extends Model
 
     protected $fillable = ['author', 'type_id', 'quote', 'content', 'user_id'];
 
+    public function categories()
+    {
+        return $this->hasManyThrough(Category::class, QuoteCategory::class, 'quote_id', 'id', 'id', 'category_id');
+    }
+
     public function type()
     {
         return $this->belongsTo(Type::class);

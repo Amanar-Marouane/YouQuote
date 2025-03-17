@@ -5,10 +5,14 @@ namespace App\Http\Controllers;
 use App\Http\Requests\{QuoteStoreRequest, QuoteUpdateRequest};
 use App\Http\Resources\QuoteResource;
 use App\Http\Trait\HttpResponses;
+use App\Models\Category;
 use App\Models\Quote;
+use App\Models\QuoteCategory;
 use App\Models\Type;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
+use function PHPSTORM_META\map;
 
 class QuoteController extends Controller
 {
@@ -18,7 +22,8 @@ class QuoteController extends Controller
      */
     public function index()
     {
-        return $this->success(QuoteResource::collection(Quote::all()));
+        $quotes = QuoteResource::collection(Quote::all());
+        return $this->success($quotes);
     }
 
     public function find($column, $value)
@@ -54,9 +59,15 @@ class QuoteController extends Controller
             'author' => $request->author,
             'quote' => $request->quote,
             'type_id' => $type->id,
-            'content' => json_encode($request->only($typesColumns[$request->type]), true),
+            'content' => $request->only($typesColumns[$request->type]),
             'user_id' => $request->user()->id,
         ]);
+        $categories = $request->category_id;
+        $data = [];
+        foreach ($categories as $key => $value) {
+            $data[] = ['category_id' => $value, 'quote_id' => $quote->id];
+        }
+        QuoteCategory::insert($data);
         return $this->success(new QuoteResource($quote));
     }
 
@@ -93,9 +104,17 @@ class QuoteController extends Controller
                 $updatedQuote[$key] = $request->$key;
             }
         }
-        $content = $request->except(['author', 'type', 'quote', 'user_id']);
+        $content = $request->except(['author', 'type', 'quote', 'user_id', 'category_id']);
         $quote->update(array_merge($updatedQuote, ['content' => $content]));
-        return $this->success($quote, 'The quote has been updated');
+
+        $categories = $request->category_id;
+        $data = [];
+        foreach ($categories as $key => $value) {
+            $data[] = ['category_id' => $value, 'quote_id' => $quote->id];
+        }
+        QuoteCategory::where('quote_id', $id)->delete();
+        QuoteCategory::insert($data);
+        return $this->success(new QuoteResource($quote), 'The quote has been updated');
     }
 
     /**
