@@ -9,7 +9,7 @@ use App\Models\{Quote, Tag, QuoteCategory, Type};
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Arr;
 use function PHPSTORM_META\map;
 
 class QuoteController extends Controller
@@ -178,7 +178,7 @@ class QuoteController extends Controller
         if (empty($tags)) {
             return $this->success(QuoteResource::collection(Quote::all()), 'Please Provide Some Tags For More Specific Search');
         }
-        $quotes = Quote::tagQuotes($tags);
+        $quotes = Quote::tagQuotes(Arr::flatten($tags));
         return $this->success(QuoteResource::collection($quotes));
     }
 }
