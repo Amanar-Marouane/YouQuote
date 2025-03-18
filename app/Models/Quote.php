@@ -34,6 +34,10 @@ class Quote extends Model
     {
         return $this->hasMany(Tag::class);
     }
+    
+    public function likes(){
+        return $this->hasMany(Like::class);
+    }
 
     public static function tagQuotes(array $tags)
     {
@@ -42,4 +46,5 @@ class Quote extends Model
             ->select('quotes.*')
             ->get();
     }
+
 }

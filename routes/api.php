@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{AuthController, QuoteController};
+use App\Http\Controllers\{AuthController, QuoteController, TagController, LikeController};
 use App\Http\Middleware\Role;
 use App\Http\Middleware\TokenVal;
 
@@ -12,9 +12,11 @@ Route::group(['middleware' => [TokenVal::class, Role::class . ':User']], functio
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/quotes', [QuoteController::class, 'index'])->name('quote.index');
     Route::post('/quote', [QuoteController::class, 'store'])->name('quote.store');
-    Route::get('/quote/tags', [QuoteController::class, 'byTags'])->name('quote.find.tags');
+    Route::get('/quote/tags', [TagController::class, 'byTags'])->name('quote.find.tags');
     Route::put('/quote/{id}', [QuoteController::class, 'update'])->name('quote.update');
     Route::delete('/quote/{id}', [QuoteController::class, 'delete'])->name('quote.delete');
+    Route::post('/quote/like/{id}', [LikeController::class, 'like'])->name('quote.like');
+    Route::post('/quote/dislike/{id}', [LikeController::class, 'dislike'])->name('quote.dislike');
     Route::get('/quote/random/{limit}', [QuoteController::class, 'random'])->name('quote.random');
     Route::get('/quote/filter/{count}', [QuoteController::class, 'wordsCount'])->name('quote.filter');
     Route::get('/quote/popular', [QuoteController::class, 'popular'])->name('quote.popular');

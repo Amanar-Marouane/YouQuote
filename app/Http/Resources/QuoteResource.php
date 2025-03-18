@@ -26,7 +26,8 @@ class QuoteResource extends JsonResource
             }),
             'tags' => TagResource::collection($this->tags)->map(function ($item) {
                 return $item->tag;
-            })
+            }),
+            'likes' => count($this->likes),
         ];
     }
 }

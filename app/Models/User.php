@@ -49,4 +49,15 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+
+    public function hasLiked(Quote $quote)
+    {
+        return !$this->likes()->where('quote_id', $quote->id)->exists();
+    }
+
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
+    }
 }
