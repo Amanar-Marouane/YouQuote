@@ -28,7 +28,7 @@ class QuoteController extends Controller
         $quotes = Quote::where($column, $value)
             ->get();
         Quote::frenquecyInc($quotes);
-        return $this->success(new QuoteResource($quotes));
+        return $this->success(QuoteResource::collection($quotes));
     }
 
     /**
