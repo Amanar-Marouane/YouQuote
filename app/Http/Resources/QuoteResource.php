@@ -21,7 +21,9 @@ class QuoteResource extends JsonResource
             'content' => json_decode($this->content),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'frequency' => $this->frequency,
-            'categories' => CategoryResource::collection($this->categories),
+            'categories' => CategoryResource::collection($this->categories)->map(function ($item) {
+                return $item->name;
+            }),
             'tags' => TagResource::collection($this->tags)->map(function ($item) {
                 return $item->tag;
             })

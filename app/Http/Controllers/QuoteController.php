@@ -7,6 +7,7 @@ use App\Http\Resources\QuoteResource;
 use App\Http\Trait\HttpResponses;
 use App\Models\{Quote, Tag, QuoteCategory, Type};
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 use function PHPSTORM_META\map;
@@ -60,18 +61,13 @@ class QuoteController extends Controller
             'user_id' => $request->user()->id,
         ]);
 
-        $data = [];
-        foreach ($request->category_id as $key => $value) {
-            $data[] = ['category_id' => $value, 'quote_id' => $quote->id];
-        }
-        QuoteCategory::insert($data);
+        $categories = array_map(fn($id) => ['category_id' => $id, 'quote_id' => $quote->id], $request->category_id);
+        QuoteCategory::insert($categories);
 
-        $tags = [];
-        $data = $request->tags ?? [];
-        foreach ($data as $key => $value) {
-            $tags[] = ['tag' => $value, 'quote_id' => $quote->id];
+        if (!empty($request->tags)) {
+            $tags = array_map(fn($tag) => ['tag' => $tag, 'quote_id' => $quote->id], $request->tags);
+            Tag::insert($tags);
         }
-        Tag::insert($tags);
         return $this->success(new QuoteResource($quote));
     }
 
@@ -171,5 +167,18 @@ class QuoteController extends Controller
             ->limit(10)
             ->get();
         return $this->success(QuoteResource::collection($quotes), 'Top 10 Popular Quotes');
+    }
+
+    public function byTags(Request $request)
+    {
+        $tags = $request->validate([
+            'tags' => 'array',
+        ]);
+
+        if (empty($tags)) {
+            return $this->success(QuoteResource::collection(Quote::all()), 'Please Provide Some Tags For More Specific Search');
+        }
+        $quotes = Quote::tagQuotes($tags);
+        return $this->success(QuoteResource::collection($quotes));
     }
 }

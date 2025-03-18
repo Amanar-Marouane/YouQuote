@@ -12,6 +12,7 @@ Route::group(['middleware' => [TokenVal::class, Role::class . ':User']], functio
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/quotes', [QuoteController::class, 'index'])->name('quote.index');
     Route::post('/quote', [QuoteController::class, 'store'])->name('quote.store');
+    Route::get('/quote/tags', [QuoteController::class, 'byTags'])->name('quote.find.tags');
     Route::put('/quote/{id}', [QuoteController::class, 'update'])->name('quote.update');
     Route::delete('/quote/{id}', [QuoteController::class, 'delete'])->name('quote.delete');
     Route::get('/quote/random/{limit}', [QuoteController::class, 'random'])->name('quote.random');

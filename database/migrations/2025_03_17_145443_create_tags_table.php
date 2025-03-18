@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('tag');
             $table->unsignedBigInteger('quote_id');
-            $table->foreign('quote_id')->references('id')->on('quotes');
+            $table->foreign('quote_id')->references('id')->on('quotes')->onDelete('cascade');
             $table->timestamps();
         });
     }

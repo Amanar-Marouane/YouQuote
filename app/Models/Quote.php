@@ -34,4 +34,12 @@ class Quote extends Model
     {
         return $this->hasMany(Tag::class);
     }
+
+    public static function tagQuotes(array $tags)
+    {
+        return Quote::join('tags', 'tags.quote_id', '=', 'quotes.id')
+            ->whereIn('tags.tag', $tags)
+            ->select('quotes.*')
+            ->get();
+    }
 }
