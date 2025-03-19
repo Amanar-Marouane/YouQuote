@@ -346,7 +346,8 @@
                 <div class="endpoint post">
                     <span class="method">POST</span>
                     <span class="endpoint-url">/api/register</span>
-                    <p class="endpoint-description">Créer un nouveau compte utilisateur.</p>
+                    <p class="endpoint-description">Créer un nouveau compte utilisateur et se connecter automatiquement.
+                        Le token d'authentification sera stocké dans un cookie HTTP-only pour une sécurité optimale.</p>
                     <div class="request-example">
                         <h4>Exemple de requête:</h4>
                         <div class="code-block">
@@ -355,6 +356,21 @@
     "email": "john@example.com",
     "password": "password123",
     "password_confirmation": "password123"
+}</code></pre>
+                        </div>
+                    </div>
+                    <div class="response-example">
+                        <h4>Exemple de réponse:</h4>
+                        <div class="code-block">
+                            <pre><code class="language-json">{
+    "status": "Request Has Been Sent Successfully",
+    "data": {
+        "user": {
+            "id": 1,
+            "name": "John Doe",
+            "email": "john@example.com"
+        }
+    }
 }</code></pre>
                         </div>
                     </div>

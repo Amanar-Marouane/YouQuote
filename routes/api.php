@@ -1,14 +1,20 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{AuthController, FavoriteController, QuoteController, TagController, LikeController};
-use App\Http\Middleware\{Role, TokenVal};
+use App\Http\Controllers\{AuthController, FavoriteController, QuoteController, TagController, LikeController, CategoryController};
+use App\Http\Middleware\{Role, TokenVal, isNotLoged};
 
-Route::post('/register', [AuthController::class, 'register'])->name('register');
-Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::group(['middleware' => isNotLoged::class], function () {
+    Route::post('/register', [AuthController::class, 'register'])->name('register');
+    Route::post('/login', [AuthController::class, 'login'])->name('login');
+});
 
 Route::group(['middleware' => TokenVal::class], function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    Route::prefix('category')->group(function () {
+        Route::get('/', [CategoryController::class, 'index'])->name('category.index');
+    });
 
     Route::prefix('quote')->group(function () {
         Route::get('/', [QuoteController::class, 'index'])->name('quote.index');
