@@ -7,7 +7,7 @@ use App\Http\Middleware\{Role, TokenVal};
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 
-Route::group(['middleware' => [TokenVal::class, Role::class . ':User']], function () {
+Route::group(['middleware' => TokenVal::class], function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::prefix('quote')->group(function () {
@@ -27,4 +27,9 @@ Route::group(['middleware' => [TokenVal::class, Role::class . ':User']], functio
     });
 });
 
-Route::group(['middleware' => [TokenVal::class, Role::class . ':Admin']], function () {});
+Route::group(['middleware' => [TokenVal::class, Role::class . ':Admin']], function () {
+    Route::prefix('quote')->group(function () {
+        Route::get('/pending', [QuoteController::class, 'pending'])->name('quote.pending');
+        Route::post('/valid/{id}', [QuoteController::class, 'valid'])->name('quote.valid');
+    });
+});

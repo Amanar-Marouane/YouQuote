@@ -37,7 +37,7 @@ class QuotePolicy
      */
     public function update(User $user, Quote $quote)
     {
-        return $user->id === $quote->user_id;
+        return $user->id === $quote->user_id || $user->account_type == 'Admin';
     }
 
     /**
@@ -45,7 +45,7 @@ class QuotePolicy
      */
     public function delete(User $user, Quote $quote)
     {
-        return $user->id === $quote->user_id;
+        return $user->id === $quote->user_id || $user->account_type == 'Admin';
     }
 
     /**

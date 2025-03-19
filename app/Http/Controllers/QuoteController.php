@@ -20,8 +20,8 @@ class QuoteController extends Controller
      */
     public function index()
     {
-        $quotes = QuoteResource::collection(Quote::all());
-        return $this->success($quotes);
+        $quotes = Quote::all();
+        return $this->success(QuoteResource::collection($quotes));
     }
 
     public function find($column, $value)
@@ -166,6 +166,29 @@ class QuoteController extends Controller
         $quotes = Quote::orderBy('frequency', 'desc')
             ->limit(10)
             ->get();
-        return $this->success(QuoteResource::collection($quotes), 'Top 10 Popular Quotes');
+        return $this->success(QuoteResource::collection($quotes), 'Top ' . count($quotes) . ' Popular Quotes');
+    }
+
+    public function pending()
+    {
+        $pendingQuotes = Quote::withoutGlobalScopes()
+            ->where('status', 'Pending')
+            ->get();
+        return $this->success(QuoteResource::collection($pendingQuotes), 'Pending Quotes');
+    }
+
+    public function valid($quote_id)
+    {
+        $quote = Quote::withoutGlobalScopes()
+            ->find($quote_id);
+        if (!$quote) {
+            return $this->error(null, 'No Quote Found', 404);
+        }
+        if ($quote->status == 'Valid') {
+            return $this->error(null, 'Quote Already Has Been Validated', 403);
+        }
+        $quote->status = 'Valid';
+        $quote->save();
+        return $this->success(new QuoteResource($quote), 'Quote Has Been Validated');
     }
 }

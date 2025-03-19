@@ -5,12 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
 
 class Quote extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = ['author', 'type_id', 'quote', 'content', 'user_id'];
+
+    protected static function booted()
+    {
+        static::addGlobalScope('valid', function (Builder $builder) {
+            $builder->where('status', 'Valid');
+        });
+    }
 
     public function categories()
     {
