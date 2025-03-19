@@ -456,6 +456,14 @@
                     <span class="method">GET</span>
                     <span class="endpoint-url">/api/quote</span>
                     <p class="endpoint-description">Récupérer toutes les citations. Nécessite une authentification.</p>
+                    <div class="request-example">
+                        <h4>Exemple de requête:</h4>
+                        <div class="code-block">
+                            <pre><code class="language-javascript">const response = await fetch('http://localhost:8000/api/quote', {
+    method: 'GET'
+});</code></pre>
+                        </div>
+                    </div>
                 </div>
                 <div class="endpoint post">
                     <span class="method">POST</span>
@@ -464,14 +472,16 @@
                     <div class="request-example">
                         <h4>Exemple de requête:</h4>
                         <div class="code-block">
-                            <pre><code class="language-json">{
-    "type": "Book",
-    "quote": "La vie est un mystère qu'il faut vivre, et non un problème à résoudre.",
-    "author": "Gandhi",
-    "category_id": [1, 3],
-    "year": 1965,
-    "publisher": "Éditions du Seuil"
-}</code></pre>
+                            <pre><code class="language-javascript">const response = await fetch('http://localhost:8000/api/quote', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        content: 'Votre citation ici',
+        author: 'Nom de l\'auteur'
+    })
+});</code></pre>
                         </div>
                     </div>
                     <div class="params-table-container">
