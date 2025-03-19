@@ -35,7 +35,7 @@ class AuthController extends Controller
 
         return $this->success([
             'user' => new UserResource($user),
-        ], 'You Logged In Succefully', 200, [
+        ], 'You Logged In Succefully With Role: ' . $user->account_type, 200, [
             'access_token' => $accessToken,
             'refresh_token' => $refreshToken,
         ]);
