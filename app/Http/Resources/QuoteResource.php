@@ -28,6 +28,7 @@ class QuoteResource extends JsonResource
                 return $item->tag;
             }),
             'likes' => count($this->likes),
+            'favorites' => count($this->favorites),
         ];
     }
 }

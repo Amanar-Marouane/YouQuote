@@ -22,21 +22,12 @@ class LikeController extends Controller
                 'user_id' => $request->user()->id,
                 'quote_id' => (int) $quote_id
             ]);
-            return $this->success(new QuoteResource($quote));
-        }
-        return $this->error(null, 'Can\'t Like This Quote Already liked By You', 403);
-    }
-
-    public function dislike(Request $request, $quote_id)
-    {
-        $quote = Quote::find($quote_id);
-        if ($request->user()->hasLiked($quote)) {
-            return $this->error(null, 'Can\'t disLike This Quote Already Not Liked By You', 403);
+            return $this->success(new QuoteResource($quote), 'You Liked This Quote');
         }
         $like = like::where('quote_id', $quote_id)
             ->where('user_id', $request->user()->id)
             ->first();
         $like->delete();
-        return $this->success(new QuoteResource($quote));
+        return $this->success(new QuoteResource($quote), 'You Unliked This Quote');
     }
 }

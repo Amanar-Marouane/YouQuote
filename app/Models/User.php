@@ -60,4 +60,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Like::class);
     }
+
+    public function hasFavorited(Quote $quote)
+    {
+        return !$this->favorites()->where('quote_id', $quote->id)->exists();
+    }
+
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
+    }
 }
