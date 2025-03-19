@@ -459,7 +459,7 @@
                     <div class="request-example">
                         <h4>Exemple de requête:</h4>
                         <div class="code-block">
-                            <pre><code class="language-javascript">const response = await fetch('http://localhost:8000/api/quote', {
+                            <pre><code class="language-javascript">const response = await fetch('https://quote.supdev.me/api/quote', {
     method: 'GET'
 });</code></pre>
                         </div>
@@ -472,7 +472,7 @@
                     <div class="request-example">
                         <h4>Exemple de requête:</h4>
                         <div class="code-block">
-                            <pre><code class="language-javascript">const response = await fetch('http://localhost:8000/api/quote', {
+                            <pre><code class="language-javascript">const response = await fetch('https://quote.supdev.me/api/quote', {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json'
@@ -670,7 +670,7 @@
             <div class="code-snippet">
                 <div class="code-snippet-header">Authentification et récupération des citations</div>
                 <pre><code class="language-javascript">const login = async () => {
-    const response = await fetch('https://youquote-api.example.com/api/login', {
+    const response = await fetch('https://quote.supdev.me/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -683,7 +683,7 @@
 };
 
 const getQuotes = async (token) => {
-    const response = await fetch('https://youquote-api.example.com/api/quote', {
+    const response = await fetch('https://quote.supdev.me/api/quote', {
         headers: { 'Authorization': `Bearer ${token}` }
     });
     return await response.json();
@@ -698,7 +698,7 @@ login()
             <div class="code-snippet">
                 <div class="code-snippet-header">Création d'une nouvelle citation</div>
                 <pre><code class="language-javascript">const createQuote = async (token, quoteData) => {
-    const response = await fetch('https://youquote-api.example.com/api/quote', {
+    const response = await fetch('https://quote.supdev.me/api/quote', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
