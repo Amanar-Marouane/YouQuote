@@ -682,27 +682,24 @@
     return data.token;
 };
 
-const getQuotes = async (token) => {
-    const response = await fetch('https://quote.supdev.me/api/quote', {
-        headers: { 'Authorization': `Bearer ${token}` }
-    });
+const getQuotes = async () => {
+    const response = await fetch('https://quote.supdev.me/api/quote');
     return await response.json();
 };
 
 login()
-    .then(token => getQuotes(token))
+    .then(() => getQuotes())
     .then(quotes => console.log(quotes))
     .catch(error => console.error('Erreur:', error));</code></pre>
             </div>
 
             <div class="code-snippet">
                 <div class="code-snippet-header">Création d'une nouvelle citation</div>
-                <pre><code class="language-javascript">const createQuote = async (token, quoteData) => {
+                <pre><code class="language-javascript">const createQuote = async (quoteData) => {
     const response = await fetch('https://quote.supdev.me/api/quote', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify(quoteData)
     });
@@ -718,7 +715,7 @@ const quoteData = {
     publisher: 'Éditions du Seuil'
 };
 
-createQuote(token, quoteData)
+createQuote(quoteData)
     .then(result => console.log('Citation créée:', result))
     .catch(error => console.error('Erreur:', error));</code></pre>
             </div>
