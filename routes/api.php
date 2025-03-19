@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\{AuthController, FavoriteController, QuoteController, TagController, LikeController};
 use App\Http\Middleware\Role;
 use App\Http\Middleware\TokenVal;
+use App\Models\Favorite;
 
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
@@ -13,6 +14,8 @@ Route::group(['middleware' => [TokenVal::class, Role::class . ':User']], functio
     Route::get('/quotes', [QuoteController::class, 'index'])->name('quote.index');
     Route::post('/quote', [QuoteController::class, 'store'])->name('quote.store');
     Route::get('/quote/tags', [TagController::class, 'byTags'])->name('quote.find.tags');
+    Route::get('/quote/likes', [LikeController::class, 'likes'])->name('quote.likes');
+    Route::get('/quote/favorites', [FavoriteController::class, 'favorites'])->name('quote.favorites');
     Route::put('/quote/{id}', [QuoteController::class, 'update'])->name('quote.update');
     Route::delete('/quote/{id}', [QuoteController::class, 'delete'])->name('quote.delete');
     Route::post('/quote/like/{id}', [LikeController::class, 'like'])->name('quote.like');

@@ -27,4 +27,10 @@ class FavoriteController extends Controller
         $favorite->delete();
         return $this->success(new QuoteResource($quote), 'Quote Has Been Removed From Favorite Collection');
     }
+
+    public function favorites(Request $request)
+    {
+        $quotes = $request->user()->favoriteQuotes;
+        return $this->success(QuoteResource::collection($quotes), 'You\'re Favorite Quotes');
+    }
 }

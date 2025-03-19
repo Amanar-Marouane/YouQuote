@@ -70,4 +70,19 @@ class User extends Authenticatable
     {
         return $this->hasMany(Favorite::class);
     }
+
+    public function quotes()
+    {
+        return $this->hasMany(Quote::class);
+    }
+
+    public function likedQuotes()
+    {
+        return $this->hasManyThrough(Quote::class, Like::class, 'user_id', 'id', 'id', 'quote_id');
+    }
+
+    public function favoriteQuotes()
+    {
+        return $this->hasManyThrough(Quote::class, Favorite::class, 'user_id', 'id', 'id', 'quote_id');
+    }
 }

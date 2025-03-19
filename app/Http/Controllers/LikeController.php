@@ -30,4 +30,10 @@ class LikeController extends Controller
         $like->delete();
         return $this->success(new QuoteResource($quote), 'You Unliked This Quote');
     }
+
+    public function likes(Request $request)
+    {
+        $quotes = $request->user()->likedQuotes;
+        return $this->success(QuoteResource::collection($quotes), 'You\'re liked Quotes');
+    }
 }
