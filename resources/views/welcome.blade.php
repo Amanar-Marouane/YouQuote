@@ -352,22 +352,24 @@
                         <div class="code-block">
                             <pre><code class="language-json">{
     "name": "John Doe",
-    "email": "john.doe@example.com",
+    "email": "john@example.com",
     "password": "password123",
     "password_confirmation": "password123"
 }</code></pre>
                         </div>
                     </div>
                 </div>
+
                 <div class="endpoint post">
                     <span class="method">POST</span>
                     <span class="endpoint-url">/api/login</span>
-                    <p class="endpoint-description">Se connecter.</p>
+                    <p class="endpoint-description">Connecter un utilisateur. Le token d'authentification sera stocké
+                        dans un cookie HTTP-only pour une sécurité optimale.</p>
                     <div class="request-example">
                         <h4>Exemple de requête:</h4>
                         <div class="code-block">
                             <pre><code class="language-json">{
-    "email": "john.doe@example.com",
+    "email": "john@example.com",
     "password": "password123"
 }</code></pre>
                         </div>
@@ -377,23 +379,23 @@
                         <div class="code-block">
                             <pre><code class="language-json">{
     "status": "Request Has Been Sent Successfully",
-    "message": "You Logged In Successfully With Role: Admin",
     "data": {
         "user": {
-            "id": 2,
+            "id": 1,
             "name": "John Doe",
-            "email": "john.doe@example.com",
-            "created_at": "2025-03-18 10:06:33"
+            "email": "john@example.com"
         }
     }
 }</code></pre>
                         </div>
                     </div>
                 </div>
+
                 <div class="endpoint post">
                     <span class="method">POST</span>
                     <span class="endpoint-url">/api/logout</span>
-                    <p class="endpoint-description">Se déconnecter.</p>
+                    <p class="endpoint-description">Déconnecter l'utilisateur et invalider le token stocké dans le
+                        cookie.</p>
                 </div>
             </div>
 
