@@ -18,6 +18,19 @@ class AuthController extends Controller
 {
     use HttpResponses;
 
+    private function generateTokensAndCookies($user)
+    {
+        $user->tokens()->delete();
+        $accessToken = $user->createToken($user->name, ['ability'], Carbon::now()->addMinutes(60 * 5))->plainTextToken;
+        $refreshToken = hash('sha256', Str::random(60));
+        $user->update(['refresh_token' => Hash::make($refreshToken)]);
+
+        return [
+            'access_token' => $accessToken,
+            'refresh_token' => $refreshToken
+        ];
+    }
+
     public function login(LoginUserRequest $request)
     {
         if (!Auth::attempt([
@@ -28,17 +41,11 @@ class AuthController extends Controller
         }
 
         $user = User::where('email', $request->email)->first();
-        $user->tokens()->delete();
-        $accessToken = $user->createToken($user->name, ['ability'], Carbon::now()->addMinutes(60 * 5))->plainTextToken;
-        $refreshToken = hash('sha256', Str::random(60));
-        $user->update(['refresh_token' => Hash::make($refreshToken)]);
+        $tokens = $this->generateTokensAndCookies($user);
 
         return $this->success([
             'user' => new UserResource($user),
-        ], 'You Logged In Succefully With Role: ' . $user->account_type, 200, [
-            'access_token' => $accessToken,
-            'refresh_token' => $refreshToken,
-        ]);
+        ], 'You Logged In Succefully With Role: ' . $user->account_type, 200, $tokens);
     }
 
     public function register(StoreUserRequest $request)
@@ -49,16 +56,11 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        $accessToken = $user->createToken($user->name, ['ability'], Carbon::now()->addMinutes(60 * 5))->plainTextToken;
-        $refreshToken = hash('sha256', Str::random(60));
-        $user->update(['refresh_token' => Hash::make($refreshToken)]);
+        $tokens = $this->generateTokensAndCookies($user);
 
         return $this->success([
             'user' => new UserResource($user),
-        ], 'You Signed Up Successfuly', 201, [
-            'access_token' => $accessToken,
-            'refresh_token' => $refreshToken,
-        ]);
+        ], 'You Signed Up Successfuly', 201, $tokens);
     }
 
     public function logout(Request $request)
