@@ -22,8 +22,8 @@ class AuthController extends Controller
     {
         $user->tokens()->delete();
         $accessToken = $user->createToken($user->name, ['ability'], Carbon::now()->addMinutes(60 * 5))->plainTextToken;
-        $refreshToken = hash('sha256', Str::random(60));
-        $user->update(['refresh_token' => Hash::make($refreshToken)]);
+        $refreshToken = Str::random(60);
+        $user->update(['refresh_token' => $refreshToken]);
 
         return [
             'access_token' => $accessToken,
@@ -71,5 +71,35 @@ class AuthController extends Controller
         $token->delete();
         $user->update(['refresh_token' => null]);
         return $this->success('', 'LogOut Done Successfuly');
+    }
+
+    public function isLogged(Request $request)
+    {
+        $accessToken = $request->cookie('access_token');
+        $refreshToken = $request->cookie('refresh_token');
+
+        if (!$accessToken) {
+            return $this->success(['authenticated' => false, 'user' => null]);
+        }
+
+        $accessToken = PersonalAccessToken::findToken($accessToken);
+
+        if (!$accessToken) {
+            return $this->success(['authenticated' => false, 'user' => null]);
+        }
+
+        $expiresAt = Carbon::parse($accessToken->expires_at);
+
+        if ($expiresAt->lessThan(Carbon::now())) {
+            return $this->success(['authenticated' => false, 'user' => null]);
+        }
+
+        $user = $accessToken->tokenable;
+
+        if (!$user || !$refreshToken || $refreshToken !== $user->refresh_token) {
+            return $this->success(['authenticated' => false, 'user' => null]);
+        }
+
+        return $this->success(['authenticated' => true, 'user' => $user]);
     }
 }

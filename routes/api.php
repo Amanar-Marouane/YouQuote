@@ -39,3 +39,5 @@ Route::group(['middleware' => [TokenVal::class, Role::class . ':Admin']], functi
         Route::post('/valid/{id}', [QuoteController::class, 'valid'])->name('quote.valid');
     });
 });
+
+Route::get('/islogged', [AuthController::class, 'isLogged']);
