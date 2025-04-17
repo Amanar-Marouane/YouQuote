@@ -60,4 +60,14 @@ class Quote extends Model
             ->select('quotes.*')
             ->get();
     }
+
+    public function isLiked(User $user)
+    {
+        return $this->likes()->where('user_id', $user->id)->exists();
+    }
+
+    public function isFavorited(User $user)
+    {
+        return $this->favorites()->where('user_id', $user->id)->exists();
+    }
 }

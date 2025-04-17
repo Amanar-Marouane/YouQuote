@@ -41,12 +41,16 @@ class AuthController extends Controller
         }
 
         $user = User::where('email', $request->email)->first();
+
+        Auth::login($user);
+
         $tokens = $this->generateTokensAndCookies($user);
 
         return $this->success([
             'user' => new UserResource($user),
-        ], 'You Logged In Succefully With Role: ' . $user->account_type, 200, $tokens);
+        ], 'You Logged In Successfully With Role: ' . $user->account_type, 200, $tokens);
     }
+
 
     public function register(StoreUserRequest $request)
     {
@@ -55,6 +59,8 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
+
+        Auth::login($user);
 
         $tokens = $this->generateTokensAndCookies($user);
 

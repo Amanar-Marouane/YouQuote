@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class QuoteResource extends JsonResource
 {
@@ -29,6 +30,8 @@ class QuoteResource extends JsonResource
             }),
             'likes' => count($this->likes),
             'favorites' => count($this->favorites),
+            'isLiked' => $this->isLiked($request->user()),
+            'isFavorited' => $this->isFavorited($request->user()),
         ];
     }
 }
