@@ -68,7 +68,7 @@ class QuoteController extends Controller
             $tags = array_map(fn($tag) => ['tag' => $tag, 'quote_id' => $quote->id], $request->tags);
             Tag::insert($tags);
         }
-        return $this->success(new QuoteResource($quote));
+        return $this->success(new QuoteResource($quote), null, 201);
     }
 
     /**

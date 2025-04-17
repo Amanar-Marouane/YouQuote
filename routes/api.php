@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{AuthController, FavoriteController, QuoteController, TagController, LikeController, CategoryController};
+use App\Http\Controllers\{AuthController, FavoriteController, QuoteController, TagController, LikeController, CategoryController, TypeController};
 use App\Http\Middleware\{Role, TokenVal, isNotLoged};
 
 Route::group(['middleware' => isNotLoged::class], function () {
@@ -15,6 +15,11 @@ Route::group(['middleware' => TokenVal::class], function () {
     Route::prefix('category')->group(function () {
         Route::get('/', [CategoryController::class, 'index'])->name('category.index');
     });
+
+    Route::prefix('type')->group(function () {
+        Route::get('/', [TypeController::class, 'index'])->name('type.index');
+    });
+
 
     Route::prefix('quote')->group(function () {
         Route::get('/', [QuoteController::class, 'index'])->name('quote.index');

@@ -12,11 +12,6 @@ class CategoryController extends Controller
 
     public function index()
     {
-        return $this->success([
-            'categories' => CategoryResource::collection(
-                Category::all()
-            ),
-            'message' => 'Categories fetched successfully'
-        ]);
+        return $this->success([CategoryResource::collection(Category::all())]);
     }
 }
