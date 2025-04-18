@@ -106,6 +106,6 @@ class AuthController extends Controller
             return $this->success(['authenticated' => false, 'user' => null]);
         }
 
-        return $this->success(['authenticated' => true, 'user' => $user]);
+        return $this->success(['authenticated' => true, 'user' => new UserResource($user)]);
     }
 }

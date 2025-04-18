@@ -26,7 +26,7 @@ class QuoteController extends Controller
 
     public function find($column, $value)
     {
-        $quotes = Quote::where($column, $value)
+        $quotes = Quote::where($column, 'LIKE', `%$value%`)
             ->get();
         Quote::frenquecyInc($quotes);
         return $this->success(QuoteResource::collection($quotes));
