@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('type_id');
             $table->foreign('type_id')->references('id')->on('types')->onDelete('cascade');
             $table->json('content');
+            $table->enum('status', ['pending', 'validated', 'rejected'])->nullable()->default('pending');
             $table->timestamps();
         });
     }

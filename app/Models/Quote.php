@@ -6,17 +6,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Builder;
+use App\Jobs\DeleteRejectedQuote;
 
 class Quote extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['author', 'type_id', 'quote', 'content', 'user_id'];
+    protected $fillable = ['author', 'type_id', 'quote', 'content', 'user_id', 'status', 'frequency'];
 
     protected static function booted()
     {
         static::addGlobalScope('valid', function (Builder $builder) {
-            $builder->where('status', 'Valid');
+            $builder->where('status', 'Validated');
         });
     }
 
@@ -69,5 +70,17 @@ class Quote extends Model
     public function isFavorited(User $user)
     {
         return $this->favorites()->where('user_id', $user->id)->exists();
+    }
+
+    public function validate(): void
+    {
+        $this->update(['status' => 'Validated']);
+    }
+
+    public function reject(): void
+    {
+        $this->update(['status' => 'Rejected']);
+
+        DeleteRejectedQuote::dispatch($this)->delay(now()->addMinutes(5));
     }
 }

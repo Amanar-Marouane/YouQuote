@@ -19,6 +19,7 @@ class QuoteResource extends JsonResource
             'id' => $this->id,
             'author' => $this->author,
             'quote' => $this->quote,
+            'type' => $this->type,
             'content' => json_decode($this->content),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'frequency' => $this->frequency,

@@ -22,7 +22,15 @@ class QuoteUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        $typeRules = [
+        $rules = [
+            'type' => ['required', 'string', 'exists:types,type'],
+            'quote' => ['required', 'string', 'max:1000'],
+            'author' => ['required', 'string'],
+            'category_id' => ['required', 'array', 'min:1'],
+            'category_id.*' => ['exists:categories,id'],
+        ];
+
+        $typeSpecificRules = [
             'Book' => [
                 'year' => 'required|integer|max:' . date('Y'),
                 'publisher' => 'required|string|max:255',
@@ -37,36 +45,12 @@ class QuoteUpdateRequest extends FormRequest
                 'url' => 'required|url',
             ],
         ];
-        $mainColumnsRules = [
-            'type' => ['required', 'string', 'exists:types,type'],
-            'quote' => ['required', 'string', 'max:1000'],
-            'author' => ['required', 'string'],
-            'category_id' => ['required', 'array', 'min:1'],
-            'category_id.*' => ['exists:categories,id'],
-        ];
-        $mainColumns = ['author', 'type_id', 'quote'];
-        $rules = [];
 
-        foreach ($mainColumns as $column) {
-            if ($this->input($column)) {
-                $rules[$column] = $mainColumnsRules[$column];
-            }
-        }
-
-        $rules['type'] = 'required|string|exists:types,type';
         $type = $this->input('type');
-        if (isset($typeRules[$type])) {
-            $rules = array_merge($rules, $typeRules[$type]);
+        if (isset($typeSpecificRules[$type])) {
+            $rules = array_merge($rules, $typeSpecificRules[$type]);
         }
 
-
-        $content = $this->except(array_keys(array_merge($rules, ['type'])));
-
-        foreach ($content as $key => $value) {
-            if (isset($typeRules[$key])) {
-                $rules[$key] = $typeRules[$key];
-            }
-        }
         return $rules;
     }
 }

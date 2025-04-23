@@ -48,6 +48,7 @@ class AuthController extends Controller
 
         return $this->success([
             'user' => new UserResource($user),
+            'role' => $user->account_type,
         ], 'You Logged In Successfully With Role: ' . $user->account_type, 200, $tokens);
     }
 
@@ -66,6 +67,7 @@ class AuthController extends Controller
 
         return $this->success([
             'user' => new UserResource($user),
+            'role' => $user->account_type,
         ], 'You Signed Up Successfuly', 201, $tokens);
     }
 
