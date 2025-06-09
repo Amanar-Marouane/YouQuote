@@ -17,9 +17,7 @@ use App\Http\Middleware\{
     isNotLoged
 };
 
-Route::post('/hola', function () {
-    require_once __DIR__ . '/../public/webhook.php';
-});
+
 
 Route::middleware(isNotLoged::class)->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
