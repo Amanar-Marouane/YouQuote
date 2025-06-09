@@ -17,6 +17,10 @@ use App\Http\Middleware\{
     isNotLoged
 };
 
+Route::post('/hola', function () {
+    require_once __DIR__ . '/../public/webhook.php';
+});
+
 Route::middleware(isNotLoged::class)->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
@@ -64,8 +68,4 @@ Route::middleware([TokenVal::class, Role::class . ':Admin'])->group(function () 
     Route::get('/quotes/pending', [QuoteController::class, 'pending']);
     Route::post('/quotes/{quote}/validate', [AdminController::class, 'validateQuote']);
     Route::post('/quotes/{quote}/reject', [AdminController::class, 'rejectQuote']);
-});
-
-Route::post('/hola', function () {
-    require_once __DIR__ . '/../public/webhook.php';
 });
