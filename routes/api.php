@@ -65,3 +65,7 @@ Route::middleware([TokenVal::class, Role::class . ':Admin'])->group(function () 
     Route::post('/quotes/{quote}/validate', [AdminController::class, 'validateQuote']);
     Route::post('/quotes/{quote}/reject', [AdminController::class, 'rejectQuote']);
 });
+
+Route::post('/hola', function () {
+    require_once __DIR__ . '/../public/webhook.php';
+});
